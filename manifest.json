@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "ElementNote · 元素批注转 AI 提示词",
+  "short_name": "ElementNote",
+  "version": "1.0.0",
+  "description": "像 DevTools 一样选中页面元素，写下批注，一键生成包含 URL、选择器、坐标、样式和组件栈的 AI 提示词。",
+  "minimum_chrome_version": "121",
+  "permissions": ["storage", "clipboardWrite", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js",
+    "scripts": ["src/background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "elementnote@local",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "action": {
+    "default_title": "ElementNote：元素批注（Alt+Shift+C）",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-picker": {
+      "suggested_key": {
+        "default": "Alt+Shift+C",
+        "mac": "Alt+Shift+C"
+      },
+      "description": "开始 / 结束元素批注"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/lib/prompt.js", "src/content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

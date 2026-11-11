@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Nimbus 控制台 · ElementNote 演示</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --faint: #94a3b8;
+      --line: #e6eaf2;
+      --primary: #4f7cff;
+      --primary-dark: #3b63e6;
+      --violet: #7c3aed;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 14px/1.55 var(--font);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    .demo-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 12px;
+    }
+    .demo-bar .dot {
+      width: 7px; height: 7px; border-radius: 999px; background: #4ade80;
+      box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.16);
+    }
+    .demo-bar strong { font-weight: 700; color: #fff; }
+    .demo-bar .spacer { flex: 1; }
+    .demo-bar .keys { display: flex; align-items: center; gap: 5px; color: #94a3b8; }
+    .kbd {
+      display: inline-block;
+      padding: 1px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      font: 600 10px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #e2e8f0;
+    }
+
+    .shell { display: flex; min-height: calc(100vh - 38px); }
+
+    .sidebar {
+      width: 228px;
+      flex: 0 0 auto;
+      padding: 20px 14px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(8px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 4px 8px 18px;
+    }
+    .brand-logo {
+      width: 30px; height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #4f7cff, #7c3aed);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 30px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(79, 124, 255, 0.32);
+    }
+    .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+    .brand-sub { color: var(--faint); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .nav a .ico { width: 16px; text-align: center; color: var(--faint); font-size: 13px; }
+    .nav a:hover { background: #eef2f9; color: var(--ink); }
+    .nav a.active { background: #eef2ff; color: #3730a3; font-weight: 600; }
+    .nav a.active .ico { color: var(--primary); }
+    .nav .section { margin: 16px 10px 6px; color: var(--faint); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+    .nav a.offset { margin-left: 2px; }
+
+    .sidebar-foot {
+      margin-top: 26px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .sidebar-foot b { display: block; color: var(--ink); font-size: 12px; margin-bottom: 2px; }
+
+    .main { flex: 1; min-width: 0; padding: 22px 26px 30px; }
+
+    .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .crumbs { color: var(--faint); font-size: 12px; }
+    .crumbs b { color: var(--ink); font-weight: 600; }
+    .search {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 250px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--faint);
+      font-size: 12px;
+    }
+    .avatar {
+      width: 31px; height: 31px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #fbbf24, #f97316);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 31px;
+      text-align: center;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 24px 26px;
+      border-radius: 18px;
+      background:
+        radial-gradient(700px 240px at 82% -20%, rgba(255, 255, 255, 0.55), transparent 60%),
+        linear-gradient(120deg, #4f7cff, #7c3aed 70%);
+      color: #fff;
+      box-shadow: 0 18px 40px rgba(79, 124, 255, 0.24);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -70px;
+      width: 240px; height: 240px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .hero-kicker { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.72; }
+    .hero h1 { margin: 6px 0 4px; font-size: 23px; line-height: 1.3; letter-spacing: 0.01em; }
+    .hero p { margin: 0; max-width: 470px; color: rgba(255, 255, 255, 0.78); font-size: 12.5px; }
+    .hero-actions { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+
+    /* 故意留下的设计问题：字号偏大、与图标基线不一致 */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border: 0;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #3730a3;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    }
+    .cta:hover { background: #f8faff; }
+    .cta .arrow { font-size: 15px; transform: translateY(2px); }
+
+    .hero-link {
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .hero-link:hover { background: rgba(255, 255, 255, 0.16); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .card {
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .stat-value { margin-top: 4px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+    .stat-delta { font-size: 11px; font-weight: 600; color: var(--green); }
+    .stat-delta.warn { color: var(--amber); }
+    .stat-delta.bad { color: var(--red); }
+    .stat-head { display: flex; align-items: baseline; justify-content: space-between; }
+
+    /* 故意：第三张卡片内边距不一致 */
+    .stat-accent { padding: 17px 14px 13px 17px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .card-title { font-size: 13px; font-weight: 700; }
+    .card-sub { color: var(--faint); font-size: 11px; }
+    .card-head .more {
+      margin-left: auto;
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 10.5px;
+      font-weight: 600;
+      text-align: left;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    td { padding: 9px 8px; border-bottom: 1px solid #f0f3f0; }
+    tr:last-child td { border-bottom: 0; }
+    .task-name { font-weight: 600; }
+    .task-path { color: var(--faint); font-size: 10.5px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+    .pill::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+    .pill.ok { background: #ecfdf5; color: #15803d; }
+    .pill.doing { background: #eff6ff; color: #1d4ed8; }
+    .pill.warn { background: #fffbeb; color: #b45309; }
+    .row-act {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+    .row-act:hover { border-color: #cbd5e1; color: var(--ink); }
+
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .issue {
+      display: flex;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfe;
+    }
+    .issue-no {
+      width: 21px; height: 21px; flex: 0 0 auto;
+      border-radius: 7px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 10.5px;
+      font-weight: 700;
+      line-height: 21px;
+      text-align: center;
+    }
+    .issue b { display: block; font-size: 12px; }
+    .issue span { display: block; margin-top: 1px; color: var(--muted); font-size: 11px; }
+
+    .component-demo {
+      margin-top: 10px;
+      border: 1px dashed #c7d2fe;
+      border-radius: 10px;
+      padding: 10px;
+      background: #f8faff;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .component-demo button {
+      margin-top: 6px;
+      padding: 5px 10px;
+      border: 1px solid #c7d2fe;
+      border-radius: 7px;
+      background: #fff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .shadow-demo {
+      margin-top: 10px;
+      padding: 9px 10px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .shadow-demo-title {
+      margin-bottom: 6px;
+      color: var(--faint);
+      font-size: 10.5px;
+    }
+
+    .iframe-demo {
+      margin-top: 10px;
+      padding: 9px 10px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .iframe-demo iframe {
+      width: 100%;
+      height: 108px;
+      margin-top: 4px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .page-foot { margin-top: 18px; color: var(--faint); font-size: 11px; display: flex; gap: 8px; align-items: center; }
+    .page-foot .sep { width: 1px; height: 11px; background: var(--line); }
+
+    @media (max-width: 1040px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-bar">
+    <span class="dot"></span>
+    <strong>ElementNote 演示页</strong>
+    <span>按 Alt+Shift+C 或点击扩展图标开始批注，然后点选任意元素</span>
+    <span class="spacer"></span>
+    <span class="keys">写出批注 <span class="kbd">Enter</span> 保存 · <span class="kbd">C</span> 复制提示词</span>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">N</div>
+        <div>
+          <div class="brand-name">Nimbus</div>
+          <div class="brand-sub">Console</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="active" href="#"><span class="ico">◈</span>概览</a>
+        <a href="#"><span class="ico">▤</span>任务队列</a>
+        <a href="#"><span class="ico">◍</span>运行记录</a>
+        <a href="#"><span class="ico">◫</span>数据看板</a>
+        <div class="section">工作区</div>
+        <a class="offset" href="#"><span class="ico">◌</span>成员管理</a>
+        <a class="offset" href="#"><span class="ico">◔</span>计费与用量</a>
+        <a class="offset" href="#"><span class="ico">⚙</span>设置</a>
+      </nav>
+      <div class="sidebar-foot">
+        <b>演示说明</b>
+        页面里故意留了几处设计问题（间距、字号、对齐），用 ElementNote 标出来，再把提示词丢给 AI。
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="crumbs">工作台 / <b>概览</b></div>
+        <div class="search">⌕ 搜索任务、成员或日志</div>
+        <div class="avatar">韩</div>
+      </div>
+
+      <section class="hero">
+        <div class="hero-kicker">Workspace overview</div>
+        <h1>今天有 3 个界面走查任务等待处理</h1>
+        <p>把设计问题直接标在页面上，生成带选择器和坐标的提示词，交给 AI 修改代码。</p>
+        <div class="hero-actions">
+          <button class="cta" id="primary-cta" data-testid="hero-cta">开始使用 <span class="arrow">→</span></button>
+          <button class="hero-link" id="hero-doc">查看走查规范</button>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="card">
+          <div class="stat-label">本周批注</div>
+          <div class="stat-head">
+            <span class="stat-value">28</span>
+            <span class="stat-delta">+12.4%</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="stat-label">已修复</div>
+          <div class="stat-head">
+            <span class="stat-value">21</span>
+            <span class="stat-delta">+8.1%</span>
+          </div>
+        </div>
+        <div class="card stat-accent">
+          <div class="stat-label">待确认</div>
+          <div class="stat-head">
+            <span class="stat-value">5</span>
+            <span class="stat-delta warn">需关注</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="stat-label">平均修复时长</div>
+          <div class="stat-head">
+            <span class="stat-value">2.4h</span>
+            <span class="stat-delta bad">-6.0%</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">最近的走查任务</div>
+              <div class="card-sub">来自设计评审与日常自测</div>
+            </div>
+            <button class="more" type="button">查看全部 →</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>任务</th>
+                <th>页面</th>
+                <th>状态</th>
+                <th>负责人</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="task-name">首页 CTA 层级偏弱</div>
+                  <div class="task-path">/dashboard</div>
+                </td>
+                <td>概览</td>
+                <td><span class="pill doing">处理中</span></td>
+                <td>林可</td>
+                <td><button class="row-act" type="button">查看</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="task-name">表格行操作按钮未对齐</div>
+                  <div class="task-path">/tasks</div>
+                </td>
+                <td>任务队列</td>
+                <td><span class="pill warn">待确认</span></td>
+                <td>周野</td>
+                <td><button class="row-act" type="button">查看</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="task-name">侧边栏激活态颜色过浅</div>
+                  <div class="task-path">/settings</div>
+                </td>
+                <td>设置</td>
+                <td><span class="pill ok">已修复</span></td>
+                <td>苏禾</td>
+                <td><button class="row-act" type="button">查看</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="task-name">移动端统计卡片换行拥挤</div>
+                  <div class="task-path">/dashboard</div>
+                </td>
+                <td>概览</td>
+                <td><span class="pill doing">处理中</span></td>
+                <td>林可</td>
+                <td><button class="row-act" type="button">查看</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">待处理的设计问题</div>
+              <div class="card-sub">试着给其中一条写批注</div>
+            </div>
+          </div>
+          <div class="list">
+            <div class="issue">
+              <div class="issue-no">1</div>
+              <div>
+                <b>主按钮字号偏大</b>
+                <span>「开始使用」比正文大太多，和图标基线不一致。</span>
+              </div>
+            </div>
+            <div class="issue">
+              <div class="issue-no">2</div>
+              <div>
+                <b>统计卡片内边距不统一</b>
+                <span>第三张卡片和另外三张的留白、圆角视觉重量不一致。</span>
+              </div>
+            </div>
+            <div class="issue">
+              <div class="issue-no">3</div>
+              <div>
+                <b>行内按钮与文字未垂直居中</b>
+                <span>「查看」按钮和左侧任务名看起来不在一条基线上。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="component-demo">
+            组件栈探测演示：下面的按钮挂了一段模拟的 React fiber 数据，用它写批注可以看到提示词里的「组件栈 / 源码位置」。
+            <br>
+            <button id="component-demo" type="button">用这个按钮试一下</button>
+          </div>
+
+          <div class="shadow-demo">
+            <div class="shadow-demo-title">Shadow DOM 拾取演示（open shadow root）</div>
+            <shadow-demo id="shadow-demo"></shadow-demo>
+          </div>
+
+          <div class="iframe-demo">
+            <div class="shadow-demo-title">iframe 容器拾取演示（内部元素不采集）</div>
+            <iframe id="iframe-demo" title="iframe 演示" srcdoc="&lt;style&gt;body{margin:0;padding:12px;background:#f8fafc;font:12px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;color:#475569}button{border:1px solid #c7d2fe;border-radius:7px;background:#eef2ff;color:#4338ca;font:600 11px/1.4 inherit;padding:5px 10px;margin-top:6px;cursor:pointer}&lt;/style&gt;&lt;div&gt;&lt;b&gt;iframe 内部内容&lt;/b&gt;&lt;div&gt;这里面的元素不会被 ElementNote 采集&lt;/div&gt;&lt;button type='button'&gt;内部按钮&lt;/button&gt;&lt;/div&gt;"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <div class="page-foot">
+        <span>Nimbus Console · Demo</span>
+        <span class="sep"></span>
+        <span>本页仅用于演示 ElementNote，接口与数据均为静态示例</span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // 模拟组件探测：给按钮挂上 React fiber 结构，ElementNote 的 MAIN world 探测可以读到。
+    (function () {
+      function CardActions() {}
+      function DashboardPage() {}
+      const dashboardFiber = {
+        type: DashboardPage,
+        _debugSource: { fileName: 'src/pages/Dashboard.tsx', lineNumber: 42, columnNumber: 7 },
+        return: null
+      };
+      const actionsFiber = {
+        type: CardActions,
+        return: dashboardFiber
+      };
+      const hostFiber = {
+        type: 'button',
+        return: actionsFiber
+      };
+      const target = document.getElementById('component-demo');
+      if (target) target['__reactFiber$elementnote_demo'] = hostFiber;
+
+      const docButton = document.getElementById('hero-doc');
+      if (docButton) {
+        docButton.addEventListener('click', function () {
+          docButton.textContent = '规范已打开（演示）';
+          setTimeout(function () { docButton.textContent = '查看走查规范'; }, 1600);
+        });
+      }
+
+      class ShadowDemo extends HTMLElement {
+        connectedCallback() {
+          if (this.shadowRoot) return;
+          const root = this.attachShadow({ mode: 'open' });
+          root.innerHTML =
+            '<style>' +
+            '.shadow-row{display:flex;align-items:center;justify-content:space-between;gap:10px;' +
+            'font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;' +
+            'color:#475569;}' +
+            'button{border:1px solid #c7d2fe;border-radius:7px;background:#eef2ff;color:#4338ca;' +
+            'font:600 11px/1.4 inherit;padding:5px 10px;cursor:pointer;}' +
+            'button:hover{background:#e0e7ff;}' +
+            '</style>' +
+            '<div class="shadow-row"><span>Shadow DOM 里的按钮</span>' +
+            '<button id="shadow-action" type="button">点我</button></div>';
+        }
+      }
+      if (!customElements.get('shadow-demo')) customElements.define('shadow-demo', ShadowDemo);
+    })();
+  </script>
+</body>
+</html>

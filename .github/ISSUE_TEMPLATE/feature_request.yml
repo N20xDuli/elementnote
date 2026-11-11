@@ -1,0 +1,53 @@
+name: Feature request / 功能建议
+description: Suggest a feature, prompt improvement, or compatibility enhancement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ElementNote is intentionally local-first and dependency-free. Please keep suggestions aligned with that.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / 使用场景
+      description: What are you trying to do? What is missing today?
+      placeholder: "I want to annotate multiple elements at once..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / 建议方案
+      description: UI, prompt fields, selector strategy, framework support, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered / 替代方案
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Element picker / selector
+        - Annotation UI
+        - Prompt template
+        - Component detection (React/Vue/Angular)
+        - Shadow DOM / iframe
+        - Popup / storage
+        - Firefox / cross-browser
+        - Documentation / demo
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: This feature keeps the extension local-first (no telemetry/remote code).
+          required: true

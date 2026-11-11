@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ElementNote — 页面元素批注转 AI 提示词</title>
+  <meta name="description" content="ElementNote：像 DevTools 一样选中页面元素，写批注，一键生成包含 URL、CSS 选择器、XPath、坐标、计算样式和 React/Vue 组件栈的 AI 提示词。Chrome / Edge / Firefox 扩展，纯本地。">
+  <meta name="keywords" content="browser extension, element picker, CSS selector, XPath, AI prompt, frontend debugging, UI annotation, Chrome extension, Firefox addon, 前端调试, 元素批注, 设计走查, AI提示词">
+  <link rel="icon" href="icons/icon128.png">
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111a2e;
+      --ink: #e5edff;
+      --muted: #93a4c4;
+      --line: rgba(255,255,255,.10);
+      --primary: #6d8cff;
+      --violet: #a78bfa;
+      --green: #4ade80;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(109,140,255,.25), transparent 60%),
+        radial-gradient(700px 400px at 95% 10%, rgba(167,139,250,.18), transparent 60%),
+        var(--bg);
+      color: var(--ink);
+      font: 400 15px/1.65 var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 28px 0 0; display: flex; align-items: center; gap: 12px; }
+    .logo { width: 42px; height: 42px; border-radius: 12px; box-shadow: 0 10px 30px rgba(109,140,255,.35); }
+    .brand b { display: block; font-size: 18px; letter-spacing: .01em; }
+    .brand span { color: var(--muted); font-size: 12px; }
+    .gh { margin-left: auto; }
+    .gh a {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+      border: 1px solid var(--line); border-radius: 999px; text-decoration: none;
+      background: rgba(255,255,255,.04); color: var(--ink); font-size: 13px;
+    }
+    .gh a:hover { background: rgba(255,255,255,.09); }
+    .hero { padding: 64px 0 40px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 42px; align-items: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px;
+      border: 1px solid rgba(74,222,128,.35); border-radius: 999px;
+      background: rgba(74,222,128,.08); color: #b7f7c9; font-size: 12px; font-weight: 600;
+    }
+    .badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--green); }
+    h1 { margin: 16px 0 12px; font-size: clamp(34px, 4.6vw, 56px); line-height: 1.12; letter-spacing: -.02em; }
+    h1 .grad { background: linear-gradient(110deg, #9db4ff, #c4b5fd 55%, #7dd3fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { margin: 0 0 24px; color: var(--muted); font-size: 16px; max-width: 560px; }
+    .lead b { color: var(--ink); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px;
+      border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--ink);
+      text-decoration: none; font-size: 14px; font-weight: 600;
+    }
+    .btn:hover { background: rgba(255,255,255,.10); }
+    .btn.primary { background: linear-gradient(135deg, #6d8cff, #8b5cf6); border-color: transparent; color: #fff; box-shadow: 0 12px 30px rgba(109,140,255,.3); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .meta { margin-top: 18px; color: #6f81a3; font-size: 12px; }
+    .shot {
+      border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,.5); background: var(--panel);
+    }
+    .shot img { display: block; width: 100%; height: auto; }
+    section { padding: 34px 0; }
+    h2 { margin: 0 0 18px; font-size: 22px; letter-spacing: -.01em; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .card {
+      padding: 18px; border: 1px solid var(--line); border-radius: 14px;
+      background: rgba(255,255,255,.035);
+    }
+    .card h3 { margin: 0 0 6px; font-size: 15px; }
+    .card p { margin: 0; color: var(--muted); font-size: 13.5px; }
+    pre {
+      margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px;
+      background: #0a101d; color: #cfe0ff; overflow: auto;
+      font: 12.5px/1.7 var(--mono);
+    }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .list { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .list li { margin: 6px 0; }
+    .keywords { color: #8195b8; font-size: 12.5px; line-height: 1.8; }
+    footer { padding: 30px 0 44px; border-top: 1px solid var(--line); color: #6f81a3; font-size: 12.5px; }
+    footer a { color: #9db4ff; text-decoration: none; }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; padding-top: 42px; }
+      .grid, .cols { grid-template-columns: 1fr; }
+      .gh a span { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img class="logo" src="icons/icon128.png" alt="ElementNote logo">
+      <div class="brand"><b>ElementNote</b><span>页面元素批注 → AI 提示词</span></div>
+      <div class="gh"><a href="https://github.com/N20xDuli/elementnote">GitHub <span>↗</span></a></div>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <span class="badge">local-first · 无账号 · 无网络请求</span>
+          <h1>把页面上的设计问题，<br><span class="grad">变成 AI 能直接执行的提示词</span></h1>
+          <p class="lead">
+            像 DevTools 一样选中元素，写下批注，一键复制包含页面 URL、CSS 选择器、XPath、坐标、计算样式和 React/Vue 组件栈的 Markdown。粘给 <b>ChatGPT / Claude / Cursor / Copilot / DeepSeek</b> 就能定位代码修改 UI。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="https://github.com/N20xDuli/elementnote/releases/latest">下载扩展 ↓</a>
+            <a class="btn" href="https://github.com/N20xDuli/elementnote">源码 / README</a>
+            <a class="btn" href="demo/index.html">在线 Demo</a>
+          </div>
+          <div class="meta">Chrome / Edge 121+ · Firefox 140+ · Manifest V3 · MIT</div>
+        </div>
+        <div class="shot"><img src="docs/screenshot-page.png" alt="ElementNote 在演示页面上选中按钮并显示批注工具"></div>
+      </div>
+
+      <section>
+        <h2>它解决什么问题</h2>
+        <div class="cols">
+          <div class="card">
+            <h3>以前</h3>
+            <p>截图 → 发给 AI → 手打「这是首页 hero 区的按钮，大概在 components/ 下面」→ AI 猜文件 → 来回追问。</p>
+          </div>
+          <div class="card">
+            <h3>现在</h3>
+            <p>点元素 → 写一句 → 复制 → 粘贴。提示词里已经有 URL、唯一选择器、XPath、坐标、样式和组件源码位置。</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>核心功能</h2>
+        <div class="grid">
+          <div class="card"><h3>精确定位</h3><p>唯一 CSS 选择器 + XPath + 父级路径 + 文档/视口坐标 + 尺寸。</p></div>
+          <div class="card"><h3>样式与组件栈</h3><p>计算样式、React/Vue/Angular 组件名与源码位置（best effort）。</p></div>
+          <div class="card"><h3>Shadow DOM / iframe</h3><p>open shadow root 内部元素可拾取；iframe 容器可批注。</p></div>
+          <div class="card"><h3>多批注合并</h3><p>一页多个问题合成一段 Markdown，AI 逐条改。</p></div>
+          <div class="card"><h3>纯本地</h3><p>没有 fetch / 上报 / 账号；数据只在浏览器 storage.local。</p></div>
+          <div class="card"><h3>跨浏览器</h3><p>同一份 MV3 代码，Chrome/Edge + Firefox。</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>30 秒上手</h2>
+        <pre><code># 1. 下载 Release，或在 Chrome/Edge 加载本目录
+# 2. 打开任意前端页面（本地 demo 也可以）
+cd demo &amp;&amp; python -m http.server 8000
+
+# 3. 按 Alt+Shift+C，点元素，写批注，Enter 保存
+# 4. 按 C 复制提示词，粘贴给 AI</code></pre>
+      </section>
+
+      <section>
+        <h2>隐私承诺</h2>
+        <ul class="list">
+          <li>扩展源码中没有网络请求、远程脚本、eval。</li>
+          <li>页面文本/HTML/样式只在本机处理，保存在 storage.local。</li>
+          <li>只有你主动复制并粘贴到第三方 AI 时，内容才离开浏览器。</li>
+          <li>AMO 数据声明：<code>required: ["none"]</code>。</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>关键词 / Keywords</h2>
+        <p class="keywords">
+          browser extension, Chrome extension, Edge extension, Firefox add-on, Manifest V3, element picker, inspect element, DevTools alternative, CSS selector, XPath, computed styles, UI annotation, design review, frontend debugging, AI prompt, prompt engineering, AI coding assistant, Cursor, Claude Code, GitHub Copilot, ChatGPT, DeepSeek, React component stack, Vue component stack, Shadow DOM, Web Components, iframe annotation, bug reporting, developer tools, local-first, privacy-first.
+          <br>
+          浏览器插件、Chrome 扩展、Edge 扩展、Firefox 附加组件、元素选择器、页面批注、设计走查、前端调试、AI 提示词、提示词工程、CSS 选择器、XPath、计算样式、组件栈、纯本地。
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      MIT © 2026 N20xDuli · <a href="https://github.com/N20xDuli/elementnote">GitHub</a> · <a href="privacy-policy.html">隐私政策</a> · <a href="demo/index.html">Demo</a><br>
+      第三方商标归各自所有者，仅用于说明兼容性。
+    </footer>
+  </div>
+</body>
+</html>

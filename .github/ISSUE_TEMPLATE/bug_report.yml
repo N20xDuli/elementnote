@@ -1,0 +1,71 @@
+name: Bug report / Bug 反馈
+description: Something is broken, or a page behaves unexpectedly. 描述问题、复现步骤和浏览器环境。
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please avoid pasting sensitive page content. 请勿粘贴敏感页面内容。
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened? / 发生了什么
+      description: Describe the bug and what you expected instead.
+      placeholder: "Example: clicking an element opens the panel, but pressing Enter does not save..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce / 复现步骤
+      placeholder: |
+        1. Open http(s)://...
+        2. Press Alt+Shift+C
+        3. Click ...
+        4. Press Enter
+    validations:
+      required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL / 页面地址
+      description: A public URL or a minimal local repro. Redact anything sensitive.
+      placeholder: "https://example.com/page or http://localhost:3000/"
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser / 浏览器
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Other Chromium
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser version / 浏览器版本
+      placeholder: "Chrome 157 / Edge 158 / Firefox 159"
+  - type: input
+    id: extension-version
+    attributes:
+      label: ElementNote version
+      placeholder: "1.0.0"
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors / 控制台错误
+      description: Content script or background errors, if any.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: This report does not contain secrets or private page content.
+          required: true

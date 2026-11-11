@@ -1,0 +1,68 @@
+{
+  "name": "elementnote",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Select page elements, annotate UI issues, and copy structured AI prompts with URL, CSS selector, XPath, coordinates, computed styles, and component stack. Chrome/Edge/Firefox Manifest V3 extension.",
+  "keywords": [
+    "browser-extension",
+    "chrome-extension",
+    "edge-extension",
+    "firefox-extension",
+    "firefox-addon",
+    "manifest-v3",
+    "element-picker",
+    "inspect-element",
+    "devtools",
+    "frontend",
+    "frontend-debugging",
+    "frontend-development",
+    "web-development",
+    "ui-annotation",
+    "design-review",
+    "visual-feedback",
+    "bug-reporting",
+    "css-selector",
+    "xpath",
+    "computed-styles",
+    "element-coordinates",
+    "ai",
+    "ai-tools",
+    "ai-coding",
+    "ai-agent",
+    "prompt-engineering",
+    "ai-prompt",
+    "cursor",
+    "claude-code",
+    "github-copilot",
+    "chatgpt",
+    "deepseek",
+    "gemini",
+    "react",
+    "vue",
+    "angular",
+    "shadow-dom",
+    "web-components",
+    "iframe",
+    "local-first",
+    "privacy-first",
+    "developer-tools",
+    "productivity"
+  ],
+  "homepage": "https://github.com/N20xDuli/elementnote#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/N20xDuli/elementnote.git"
+  },
+  "bugs": {
+    "url": "https://github.com/N20xDuli/elementnote/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node tests/e2e.mjs",
+    "lint:firefox": "npx web-ext@latest lint --source-dir . --output json",
+    "build:firefox": "python tools/build_amo_xpi.py . store/amo/elementnote-1.0.0.xpi"
+  }
+}

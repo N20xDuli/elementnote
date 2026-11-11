@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# dependencies & logs
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+.env
+.env.*
+
+# temp / generated
+docs/_crop*.png
+dist/
+coverage/
+*.tmp

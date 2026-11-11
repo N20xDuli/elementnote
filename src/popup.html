@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ElementNote</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="head">
+      <div class="brand">
+        <div class="logo">EN</div>
+        <div class="brand-text">
+          <div class="name">ElementNote</div>
+          <div class="tagline">元素批注 → AI 提示词</div>
+        </div>
+      </div>
+      <div class="count" id="count" title="当前页面批注数">0</div>
+    </header>
+
+    <section class="page">
+      <div class="page-top">
+        <span class="page-label">当前页面</span>
+        <span class="live" id="live" hidden>选择元素中…</span>
+      </div>
+      <div class="url" id="pageUrl">—</div>
+      <div class="notice" id="notice" hidden></div>
+    </section>
+
+    <main class="main">
+      <div class="empty" id="empty">
+        <div class="empty-icon">⌖</div>
+        <div class="empty-title">还没有批注</div>
+        <div class="empty-text">按 <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> 或点「开始批注」，在页面上点选元素，写下问题即可。</div>
+      </div>
+      <div class="list" id="list"></div>
+
+      <details class="others" id="others" hidden>
+        <summary id="othersSummary">其他页面</summary>
+        <div class="others-list" id="othersList"></div>
+      </details>
+    </main>
+
+    <div class="status" id="status" hidden></div>
+
+    <footer class="foot">
+      <button class="btn primary" id="copy" disabled title="生成并复制当前页面的提示词">复制提示词</button>
+      <button class="btn" id="start" title="在当前页面开始选择元素">开始批注</button>
+      <button class="btn ghost" id="clear" disabled title="删除当前页面的全部批注">清空</button>
+    </footer>
+    <div class="hint">快捷键 <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> · 数据仅保存在本机</div>
+  </div>
+
+  <script src="lib/prompt.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
