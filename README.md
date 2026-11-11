@@ -11,7 +11,7 @@
 [![E2E](https://img.shields.io/badge/E2E-73%20assertions-16a34a.svg)](#testing)
 [![AMO](https://img.shields.io/badge/AMO-submission%20ready-FF7139.svg)](store/amo/SUBMIT.md)
 
-[English](#english-quick-start) · [中文](#中文说明) · [Features](#features--功能) · [Install](#install--安装) · [Usage](#usage--使用) · [Privacy](#privacy--permissions) · [FAQ](#faq--常见问题) · [Keywords](#keywords--关联词)
+[在线主页](https://N20xDuli.github.io/elementnote/) · [在线 Demo](https://N20xDuli.github.io/elementnote/demo/) · [隐私政策](https://N20xDuli.github.io/elementnote/privacy-policy.html) · [English](#english-quick-start) · [中文](#中文说明) · [Features](#features--功能) · [Install](#install--安装) · [Usage](#usage--使用) · [Privacy](#privacy--permissions) · [FAQ](#faq--常见问题) · [Keywords](#keywords--关联词)
 
 ![ElementNote page annotation demo](docs/screenshot-page.png)
 

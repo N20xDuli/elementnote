@@ -50,7 +50,7 @@ ElementNote 是一个完全在本机运行的浏览器扩展，用于在网页�
 
 ### 8. 联系
 
-如有隐私问题，请联系：`[YOUR_EMAIL]`
+如有隐私问题，请在 GitHub 提一个 issue：<https://github.com/N20xDuli/elementnote/issues> 。
 
 ---
 
@@ -92,4 +92,4 @@ The source contains no `fetch`, XHR, WebSocket, `sendBeacon`, remote scripts, `e
 
 ### 6. Contact
 
-For privacy questions: `[YOUR_EMAIL]`
+For privacy questions, open an issue: <https://github.com/N20xDuli/elementnote/issues>.

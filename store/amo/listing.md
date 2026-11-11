@@ -1,6 +1,6 @@
 # AMO Listing 文案（可直接粘贴）
 
-> 提交前把 `[YOUR_EMAIL]`、`[YOUR_PRIVACY_URL]`、`[YOUR_HOMEPAGE]` 换成你的信息。AMO 支持多语言 listing；下面是中文主文案，英文可放第二个 locale。
+> 提交前只需把 `[YOUR_EMAIL]` 换成你的支持邮箱（AMO 必填）。隐私政策和主页已经准备好。
 
 ## 基本信息
 
@@ -12,8 +12,8 @@
 - **标签**：frontend, debugging, css, react, ai, prompt, annotation, inspector
 - **许可证**：MIT
 - **支持邮箱**：`[YOUR_EMAIL]`
-- **主页（可选）**：`[YOUR_HOMEPAGE]`
-- **隐私政策 URL**：`[YOUR_PRIVACY_URL]`
+- **主页（可选）**：https://github.com/N20xDuli/elementnote
+- **隐私政策 URL**：https://N20xDuli.github.io/elementnote/privacy-policy.html
 
 ## 详细描述（中文）
 

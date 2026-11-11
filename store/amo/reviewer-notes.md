@@ -81,4 +81,4 @@ No source build or transpilation is required; reviewers can diff the XPI directl
 
 ## Contact
 
-`[YOUR_EMAIL]`
+https://github.com/N20xDuli/elementnote/issues

@@ -45,7 +45,7 @@
    - 名称、摘要、详细描述：直接复制 [`listing.md`](listing.md)
    - 分类：**Developer Tools**
    - 许可证：**MIT**
-   - 隐私政策 URL：把 [`privacy-policy.md`](privacy-policy.md) 托管后填入（GitHub Pages / Gist / 自己的站点均可）
+   - 隐私政策 URL：`https://N20xDuli.github.io/elementnote/privacy-policy.html`（已托管，可直接填）
    - 支持邮箱：替换成你的邮箱
    - 截图：上传 `screenshots/01-elementnote-page-1280x800.png`
 5. 数据收集声明：选择 **None / 不收集**（与 manifest 的 `data_collection_permissions.required = ["none"]` 一致）。

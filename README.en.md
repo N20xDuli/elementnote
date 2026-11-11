@@ -2,7 +2,7 @@
 
 **Select any UI element → write a note → copy a structured AI prompt.**
 
-[中文 README](README.md) · [Latest release](https://github.com/N20xDuli/elementnote/releases/latest) · [Demo](demo/index.html)
+[中文 README](README.md) · [Latest release](https://github.com/N20xDuli/elementnote/releases/latest) · [Live demo](https://N20xDuli.github.io/elementnote/demo/) · [Privacy](https://N20xDuli.github.io/elementnote/privacy-policy.html)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-4f7cff.svg)](manifest.json)
